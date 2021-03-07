@@ -3,6 +3,10 @@
    Ported to Arduino ESP32 by Evandro Copercini
 */
 
+/* use board ESP32 Dev Module
+ *  with an APP partion >= 1.7 MB
+ */
+
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
@@ -89,7 +93,7 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
             Serial.println(httpResponseCode);
 
             // Free resources
-            http.end();      }
+            http.end();
           } else {
             Serial.println("Cannot connect to host.");
             // WiFi is blocking the BLE loop when the host can't be found
