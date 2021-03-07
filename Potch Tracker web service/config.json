@@ -1,0 +1,8 @@
+{
+    "defaultPort" : "3000",
+    "rooms" : {
+      "MAC"  : "room",
+      "MAC2" : "room2"
+    }
+}
+  
