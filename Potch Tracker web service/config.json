@@ -3,6 +3,7 @@
     "rooms" : {
       "MAC"  : "room",
       "MAC2" : "room2"
-    }
+    },
+    "tagAddress" : "c3:c0:3a:37:5a:d9"
 }
   

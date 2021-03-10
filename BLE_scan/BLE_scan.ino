@@ -4,8 +4,8 @@
 */
 
 /* use board ESP32 Dev Module
- *  with an APP partion >= 1.7 MB
- */
+    with an APP partion >= 1.7 MB
+*/
 
 #include <BLEDevice.h>
 #include <BLEUtils.h>
@@ -15,14 +15,15 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-BLEAddress addr = BLEAddress("c3:c0:3a:37:5a:d9");
+//BLEAddress addr = BLEAddress("c3:c0:3a:37:5a:d9");
+BLEAddress addr = BLEAddress("");
 const char* ssid     = "Rivendell";
 const char* password = "lamppost";
 
-const char* host     = "192.168.4.67";
+const char* host     = "192.168.4.49";
 int         port     = 3000;
 
-const char* room     = "test";
+// const char* room     = "test";
 
 byte        mac[6];
 String      macStr;
@@ -60,6 +61,35 @@ void connect_wifi () {
     macStr = mac2String(mac);
     Serial.print("MAC: ");
     Serial.println(macStr);
+  }
+}
+
+void get_tagAddress () {
+  if (WiFi.status() == WL_CONNECTED) {
+
+    if (client.connect(host, port)) {
+      client.stop();
+      HTTPClient http;
+
+      String url = "http://" + String(host) + ":" + String(port) + "/tagAddress";
+      // Your Domain name with URL path or IP address with path
+      http.begin(url);
+
+      int httpResponseCode = http.GET();
+      if (httpResponseCode == HTTP_CODE_OK) {
+        String payload = http.getString();
+        //std::string result = payload.c_str();
+        Serial.print("tag address: ");
+        Serial.println(payload);
+        addr = BLEAddress(payload.c_str());
+      } else {
+        Serial.print("Error getting tag address: ");
+        Serial.println(httpResponseCode);
+      }
+      http.end();
+    }
+  } else {
+    Serial.println("WiFi Disconnected");
   }
 }
 
@@ -123,6 +153,7 @@ void setup() {
   pBLEScan->setWindow(99);  // less or equal setInterval value
 
   connect_wifi();
+  get_tagAddress();
 }
 
 void loop() {

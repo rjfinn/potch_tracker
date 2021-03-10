@@ -1,0 +1,91 @@
+<html>
+<head>
+    <title>Potch Tracker</title>
+    <style>
+        .flex-container {
+            display: flex;
+            height: 100px;
+        }
+
+        .flex-child {
+            flex: 1;
+            border: 2px solid black;
+        }  
+
+        .flex-child:first-child {
+            margin-right: 100px;
+        } 
+        .dot {
+            height: 25px;
+            width: 25px;
+            background-color: rgb(7, 7, 158);
+            border-radius: 50%;
+            top: 50px;
+            position: absolute;
+        }
+    </style>
+    <script>
+        function scaleValues(inputY, minY, maxY) {
+            return (inputY - minY) / (maxY - minY);
+        }
+    </script>
+</head>
+<body>
+
+    <div id="container" class="flex-container">
+        <div id="room1" class="flex-child magenta">
+            Room 1
+        </div>
+        <div id="room2" class="flex-child green">
+            Room 2
+        </div>
+        <div id="dot" class="dot"></div>
+    </div>
+<script src="/ui/js/jquery-3.6.0.min.js"></script>
+<script>
+    var rooms = {
+        1 : {
+            scale: 0
+        },
+        2 : {
+            scale: 0
+        }
+    }
+
+    function getReadings() {
+        (function () {
+            $.getJSON("/readings").done(function (data) {
+                console.log("data");
+                console.log(data);
+                var index = 1;
+                $.each(data, function( key, val) {
+                    var roomScale = scaleValues(val["rssi"],val["min"],val["max"]);
+                    rooms[index] = roomScale;
+                    index++;
+                });
+                console.log(rooms);
+                room1Offset = $("#room1").offset().left;
+                room2Offset = $("#room2").offset().left;
+                var minY = room1Offset + 20;
+                var maxY = room2Offset + $("#room2").width() - 20;
+                var range = maxY - minY;
+                console.log(minY);
+                console.log(maxY);
+                console.log(range);
+                console.log(((1-rooms[1])*range)+minY);
+                console.log((rooms[2]*range)+minY);
+                if(rooms[1] > rooms[2]) {
+                    // tag closer to room 1
+                    $("#dot").animate({ left: ((1-rooms[1])*range)+minY});
+                } else {
+                    // tag closer to room 2 (or equal)
+                    $("#dot").animate({ left: (rooms[2]*range)+minY});
+                }
+            });
+        })();
+    }
+  
+    setInterval(getReadings,1000);
+</script>
+</body>
+</html>
