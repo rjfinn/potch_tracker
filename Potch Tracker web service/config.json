@@ -1,8 +1,8 @@
 {
     "defaultPort" : "3000",
     "rooms" : {
-      "MAC"  : "room",
-      "MAC2" : "room2"
+      "3C:61:05:30:D8:E4"  : "Bathroom",
+      "AC:67:B2:37:7B:94"  : "Bedroom"
     },
     "tagAddress" : "c3:c0:3a:37:5a:d9"
 }

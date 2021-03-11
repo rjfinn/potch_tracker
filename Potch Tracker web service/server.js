@@ -3,32 +3,24 @@ var http = require('http');
 var bodyParser = require('body-parser');
 const { RSA_PKCS1_PADDING } = require('constants');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var nconf = require('nconf');
+const fs = require('fs');
 
 var app = express();
 
 var readings = {};  // to store the readings (value) by MAC address (key) in a key/value pair dictionary
-var cutoff = -110;  // value for which we assume the tag is out of reach
-var ttl = 120000; // time-to-live of readings (in milliseconds)
+var cutoff = -99;  // value for which we assume the tag is out of reach
+var ttl = 30000; // time-to-live of readings (in milliseconds)
 
 // object will hold values for the closest reader to the bluetooth tag
 var closest = {};
 
-// read in our config file
-nconf.file({ file: 'config.json' });
+let rawdata = fs.readFileSync('config.json');
+var config = JSON.parse(rawdata);
+console.log(config);
 
-app.set('port', nconf.get('defaultPort') || process.env.PORT || 3000);
+app.set('port', config.defaultPort || process.env.PORT || 3000);
 
 app.use('/ui', express.static('public'));
-
-// remove me
-// demo of nconf = massive clue
-var rooms = nconf.get('rooms');
-Object.keys(rooms).forEach(function (key) {
-    console.log("room key: " + key);
-    console.log("room value: " + rooms[key]);
-});
-// end remove me
 
 // HTTP GET /room function to get the name of the closest room
 app.get('/room', function (req, res) {
@@ -36,7 +28,7 @@ app.get('/room', function (req, res) {
 });
 
 app.get('/tagAddress', function (req, res) {
-    res.end(nconf.get('tagAddress'));
+    res.end(config.tagAddress);
 });
 
 function initClosest(now) {
@@ -56,20 +48,28 @@ async function findClosest() {
     // loop through each reading in the rssi object
     Object.keys(readings).forEach(function (key) {
         //console.log("check for " + key)
-        if (readings[key].timestamp > too_old) {
+        if (readings[key].rssi < cutoff) {
+            console.log(key + " is too far away");
+            delete readings[key];
+        } else if (readings[key].timestamp > too_old) {
             var reading = readings[key].rssi;
 
             // should both be numbers at this point
             //console.log("compare " + reading + " to " + closest.rssi);
             if (reading >= closest.rssi) {
                 // console.log(key + " is closer");
-                closest.room = key;  // change to room name
+                if(closest.hasOwnProperty('room') && closest.room.hasOwnProperty(key)) {
+                    closest.room = config.rooms[key];
+                } else {
+                    closest.room = key;
+                }
                 closest.mac = key;
                 closest.rssi = reading;
                 closest.timestamp = readings[key].timestamp;
             }
         } else {
             console.log(key + " is too old");
+            delete readings[key];
         }
     });
 }
@@ -87,6 +87,11 @@ app.post('/rssi', urlencodedParser, function (req, res) {
 
     readings[req.body.mac].rssi = rssi;
     readings[req.body.mac].timestamp = Date.now();
+    if(config.hasOwnProperty('rooms') && config.rooms.hasOwnProperty(req.body.mac)) {
+        readings[req.body.mac].room = config.rooms[req.body.mac];
+    } else {
+        readings[req.body.mac].room = String(req.body.mac);
+    }
 
     if (rssi > readings[req.body.mac].max) {
         readings[req.body.mac].max = rssi;

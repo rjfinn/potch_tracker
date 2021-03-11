@@ -15,6 +15,14 @@
         .flex-child:first-child {
             margin-right: 100px;
         } 
+
+        .readings {
+            margin-top: 100px;
+            border: 2px solid black;
+            width: 40%;
+            background-color: rgb(150, 150, 150);
+        }
+
         .dot {
             height: 25px;
             width: 25px;
@@ -41,6 +49,9 @@
         </div>
         <div id="dot" class="dot"></div>
     </div>
+    <div id="readings" class="readings">
+
+    </div>
 <script src="/ui/js/jquery-3.6.0.min.js"></script>
 <script>
     var rooms = {
@@ -58,6 +69,8 @@
                 console.log("data");
                 console.log(data);
                 var index = 1;
+                //$("#readings").html(data);
+                document.getElementById("readings").textContent = JSON.stringify(data, undefined, 2);
                 $.each(data, function( key, val) {
                     var roomScale = scaleValues(val["rssi"],val["min"],val["max"]);
                     rooms[index] = roomScale;
