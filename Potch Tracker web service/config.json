@@ -1,8 +1,10 @@
 {
     "defaultPort" : "3000",
     "rooms" : {
-      "3C:61:05:30:D8:E4"  : "Bathroom",
-      "AC:67:B2:37:7B:94"  : "Bedroom"
+      "3C:61:05:30:D8:E4"  : "Kitchen",
+      "AC:67:B2:37:7B:94"  : "Dining Room",
+      "AC:67:B2:36:43:10"  : "Living Room",
+      "AC:67:B2:35:53:3C"  : "Bathroom"
     },
     "tagAddress" : "c3:c0:3a:37:5a:d9"
 }

@@ -66,14 +66,15 @@
     function getReadings() {
         (function () {
             $.getJSON("/readings").done(function (data) {
-                console.log("data");
+                //console.log("data");
                 console.log(data);
                 var index = 1;
                 //$("#readings").html(data);
                 document.getElementById("readings").textContent = JSON.stringify(data, undefined, 2);
                 $.each(data, function( key, val) {
-                    var roomScale = scaleValues(val["rssi"],val["min"],val["max"]);
-                    rooms[index] = roomScale;
+                    //var roomScale = scaleValues(val["rssi"],val["min"],val["max"]);
+                    //rooms[index] = roomScale;
+                    rooms[index] = val["rssi"];
                     index++;
                 });
                 console.log(rooms);
@@ -82,17 +83,17 @@
                 var minY = room1Offset + 20;
                 var maxY = room2Offset + $("#room2").width() - 20;
                 var range = maxY - minY;
-                console.log(minY);
-                console.log(maxY);
-                console.log(range);
-                console.log(((1-rooms[1])*range)+minY);
-                console.log((rooms[2]*range)+minY);
-                if(rooms[1] > rooms[2]) {
+                if(Math.abs(rooms[1] - rooms[2]) < 10) {
+                    // tag basically in the middle
+                    $("#dot").animate({ left: $(window).width()/2 - $("#dot").width()/2 });
+                } else if(rooms[1] > rooms[2]) {
                     // tag closer to room 1
-                    $("#dot").animate({ left: ((1-rooms[1])*range)+minY});
+                    //$("#dot").animate({ left: ((1-rooms[1])*range)+minY});
+                    $("#dot").animate({ left: room1Offset + $("#room1").width()/2 });
                 } else {
-                    // tag closer to room 2 (or equal)
-                    $("#dot").animate({ left: (rooms[2]*range)+minY});
+                    // tag closer to room 2
+                    //$("#dot").animate({ left: (rooms[2]*range)+minY});
+                    $("#dot").animate({ left: room2Offset+($("#room2").width()/2) });
                 }
             });
         })();

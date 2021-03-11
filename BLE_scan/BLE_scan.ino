@@ -20,7 +20,7 @@ BLEAddress addr = BLEAddress("");
 const char* ssid     = "Rivendell";
 const char* password = "lamppost";
 
-const char* host     = "192.168.4.49";
+const char* host     = "192.168.4.67";
 int         port     = 3000;
 
 // const char* room     = "test";
@@ -29,6 +29,7 @@ byte        mac[6];
 String      macStr;
 
 int scanTime = 5; //In seconds
+
 BLEScan* pBLEScan;
 WiFiClient client;
 
