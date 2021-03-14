@@ -49,9 +49,9 @@
         </div>
         <div id="dot" class="dot"></div>
     </div>
-    <div id="readings" class="readings">
+    <pre id="readings" class="readings">
 
-    </div>
+    </pre>
 <script src="/ui/js/jquery-3.6.0.min.js"></script>
 <script>
     var rooms = {
@@ -70,13 +70,17 @@
                 console.log(data);
                 var index = 1;
                 //$("#readings").html(data);
-                document.getElementById("readings").textContent = JSON.stringify(data, undefined, 2);
+                var readingsOutput = "";
+                //document.getElementById("readings").textContent = JSON.stringify(data, undefined, 2);
+
                 $.each(data, function( key, val) {
                     //var roomScale = scaleValues(val["rssi"],val["min"],val["max"]);
                     //rooms[index] = roomScale;
+                    readingsOutput += key + " RSSI: "+val["rssi"] + "\n\n";
                     rooms[index] = val["rssi"];
                     index++;
                 });
+                document.getElementById("readings").textContent = readingsOutput;
                 console.log(rooms);
                 room1Offset = $("#room1").offset().left;
                 room2Offset = $("#room2").offset().left;
