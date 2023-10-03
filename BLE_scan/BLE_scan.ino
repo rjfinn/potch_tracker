@@ -17,10 +17,10 @@
 
 //BLEAddress addr = BLEAddress("c3:c0:3a:37:5a:d9");
 BLEAddress addr = BLEAddress("");
-const char* ssid     = "Rivendell";
-const char* password = "lamppost";
+const char* ssid     = "<your ssid>";
+const char* password = "<your pass>";
 
-const char* host     = "192.168.4.67";
+const char* host     = "<your server IP>";
 int         port     = 3000;
 
 // const char* room     = "test";
